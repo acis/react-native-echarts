@@ -22,19 +22,23 @@ export default class App extends Component {
   }
 
   render() {
+    const scaleToFit = Platform.OS === 'android'
+    const source = (Platform.OS === 'ios') ? require('./tpl.html') : {'uri':'file:///android_asset/tpl.html'}
+
     return (
       <View style={{flex: 1, height: this.props.height || 400,}}>
         <WebView
           ref="chart"
           scrollEnabled = {false}
+          originWhitelist = {['*']}
+          useWebKit = { Platform.OS === 'ios' ? true : false }
           injectedJavaScript = {renderChart(this.props)}
           style={{
             height: this.props.height || 400,
             backgroundColor: this.props.backgroundColor || 'transparent'
           }}
-          scalesPageToFit={Platform.OS !== 'ios'}
-          originWhitelist={['*']}
-          source={require('./tpl.html')}
+          scalesPageToFit={scaleToFit}
+          source={source}
           onMessage={event => this.props.onPress ? this.props.onPress(JSON.parse(event.nativeEvent.data)) : null}
         />
       </View>
